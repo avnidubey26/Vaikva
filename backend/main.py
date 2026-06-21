@@ -243,3 +243,16 @@ def get_dashboard(company_id: int):
         "questions": questions,
         "roadmaps": roadmaps
     }
+
+@app.get("/companies/search/{keyword}")
+def search_companies(keyword: str):
+
+    db: Session = SessionLocal()
+
+    companies = (
+        db.query(Company)
+        .filter(Company.company_name.ilike(f"%{keyword}%"))
+        .all()
+    )
+
+    return companies
