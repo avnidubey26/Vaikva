@@ -8,6 +8,8 @@ from utils.hash import hash_password, verify_password
 from utils.auth import create_access_token
 from models.company import Company
 from schemas.company import CompanyCreate
+from schemas.question import QuestionCreate
+from models.question import Question
 
 app = FastAPI()
 
@@ -125,4 +127,34 @@ def get_companies():
 
     return companies
 
+@app.post("/questions")
+def add_question(question: QuestionCreate):
+
+    db: Session = SessionLocal()
+
+    new_question = Question(
+        company_id=question.company_id,
+        question=question.question,
+        answer=question.answer,
+        difficulty=question.difficulty
+    )
+
+    db.add(new_question)
+
+    db.commit()
+
+    db.refresh(new_question)
+
+    return {
+        "message": "Question Added Successfully",
+        "question_id": new_question.id
+    }
+@app.get("/questions")
+def get_questions():
+
+    db: Session = SessionLocal()
+
+    questions = db.query(Question).all()
+
+    return questions
 
