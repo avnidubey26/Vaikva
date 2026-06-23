@@ -33,30 +33,57 @@ function App() {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("name");
+    localStorage.removeItem("user_id");
 
     navigate("/login");
   };
 
+  const saveCompany = async (companyId) => {
+    try {
+      const userId = localStorage.getItem("user_id");
+
+      if (!userId) {
+        alert("Please login first");
+        return;
+      }
+
+      const response = await axios.post(
+        "http://127.0.0.1:8000/save-company",
+        {
+          user_id: Number(userId),
+          company_id: companyId,
+        }
+      );
+
+      alert(response.data.message);
+    } catch (error) {
+      console.log(error);
+      alert("Error saving company");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-black text-white">
-
-      <nav className="flex justify-between items-center px-8 py-6 border-b border-white/10 backdrop-blur-md">
-
-        <h1 className="text-3xl font-bold tracking-wide">
+      <nav className="flex justify-between items-center px-8 py-6 border-b border-white/10">
+        <h1 className="text-3xl font-bold">
           CareerOS
         </h1>
 
         <div className="flex items-center gap-4">
-
           {userName ? (
             <>
-              <p className="text-gray-300">
-                Hi, {userName} 👋
-              </p>
+              <p>Hi, {userName} 👋</p>
+
+              <button
+                onClick={() => navigate("/saved")}
+                className="px-5 py-2 rounded-xl border border-blue-500"
+              >
+                Saved Companies
+              </button>
 
               <button
                 onClick={handleLogout}
-                className="px-5 py-2 rounded-xl border border-red-500 text-red-400 hover:bg-red-500 hover:text-white transition-all"
+                className="px-5 py-2 rounded-xl border border-red-500"
               >
                 Logout
               </button>
@@ -72,17 +99,14 @@ function App() {
 
               <button
                 onClick={() => navigate("/register")}
-                className="px-5 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 font-semibold"
+                className="px-5 py-2 rounded-xl bg-blue-600"
               >
                 Register
               </button>
             </>
           )}
-
         </div>
-
       </nav>
-
       <section className="relative flex flex-col items-center justify-center text-center min-h-screen px-6 overflow-hidden">
 
         <div className="absolute inset-0 bg-gradient-to-b from-blue-950/40 via-black to-black"></div>
@@ -103,7 +127,10 @@ function App() {
           hiring strategies.
         </p>
 
-        <button className="relative z-10 bg-gradient-to-r from-blue-500 to-purple-600 px-8 py-4 rounded-xl text-lg font-semibold hover:scale-105 transition-all duration-300">
+        <button
+          onClick={() => navigate("/dashboard")}
+          className="relative z-10 bg-gradient-to-r from-blue-500 to-purple-600 px-8 py-4 rounded-xl text-lg font-semibold hover:scale-105 transition-all duration-300"
+        >
           Get Started
         </button>
 
@@ -111,8 +138,7 @@ function App() {
 
       </section>
 
-      <section className="px-10 pb-20">
-
+      <section className="px-10 py-20">
         <h2 className="text-4xl font-bold mb-6 text-center">
           Featured Companies
         </h2>
@@ -123,12 +149,11 @@ function App() {
             placeholder="Search Company..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-blue-500"
+            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3"
           />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
           {companies
             .filter((company) =>
               company.company_name
@@ -139,30 +164,29 @@ function App() {
               <div
                 key={company.id}
                 onClick={() => selectCompany(company)}
-                className="cursor-pointer backdrop-blur-md rounded-2xl p-8 transition-all duration-300 hover:scale-[1.02] border border-white/10 bg-white/5 hover:border-blue-500"
+                className="cursor-pointer rounded-2xl p-8 border border-white/10 bg-white/5"
               >
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    saveCompany(company.id);
+                  }}
+                  className="mb-3 px-3 py-1 rounded-lg border"
+                >
+                  ❤️ Save
+                </button>
+
                 <h3 className="text-2xl font-bold text-blue-400 mb-3">
                   {company.company_name}
                 </h3>
 
-                <p className="text-gray-300 mb-2">
-                  Role: {company.role}
-                </p>
-
-                <p className="text-gray-300 mb-2">
-                  Package: {company.package}
-                </p>
-
-                <p className="text-gray-300">
-                  Experience: {company.experience}
-                </p>
+                <p>Role: {company.role}</p>
+                <p>Package: {company.package}</p>
+                <p>Experience: {company.experience}</p>
               </div>
             ))}
-
         </div>
-
       </section>
-
     </div>
   );
 }

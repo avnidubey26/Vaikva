@@ -13,6 +13,8 @@ from schemas.question import QuestionCreate
 from models.question import Question
 from models.roadmap import Roadmap
 from schemas.roadmap import RoadmapCreate
+from models.saved_company import SavedCompany
+from schemas.saved_company import SaveCompany
 
 
 app = FastAPI()
@@ -99,10 +101,11 @@ def login(user: UserLogin):
     )
 
     return {
-        "message": "Login successful",
-        "access_token": access_token,
-        "token_type": "bearer",
-        "name": existing_user.name
+    "message": "Login successful",
+    "access_token": access_token,
+    "token_type": "bearer",
+    "name": existing_user.name,
+    "user_id": existing_user.id
     }
 
 @app.post("/companies")
@@ -279,4 +282,77 @@ def dashboard_stats():
         "companies": companies_count,
         "questions": questions_count,
         "roadmaps": roadmaps_count
+    }
+
+@app.post("/save-company")
+def save_company(data: SaveCompany):
+
+    db: Session = SessionLocal()
+
+    existing = (
+        db.query(SavedCompany)
+        .filter(
+            SavedCompany.user_id == data.user_id,
+            SavedCompany.company_id == data.company_id
+        )
+        .first()
+    )
+
+    if existing:
+        return {
+            "message": "Company already saved"
+        }
+
+    saved = SavedCompany(
+        user_id=data.user_id,
+        company_id=data.company_id
+    )
+
+    db.add(saved)
+
+    db.commit()
+
+    db.refresh(saved)
+
+    return {
+        "message": "Company saved successfully"
+    }
+
+
+@app.get("/saved-companies/{user_id}")
+def get_saved_companies(user_id: int):
+
+    db: Session = SessionLocal()
+
+    saved = (
+        db.query(SavedCompany)
+        .filter(SavedCompany.user_id == user_id)
+        .all()
+    )
+
+    return saved
+
+
+@app.delete("/saved-company/{saved_id}")
+def delete_saved_company(saved_id: int):
+
+    db: Session = SessionLocal()
+
+    saved = (
+        db.query(SavedCompany)
+        .filter(SavedCompany.id == saved_id)
+        .first()
+    )
+
+    if not saved:
+        return {
+            "message": "Saved company not found"
+        }
+
+    db.delete(saved)
+
+    db.commit()
+
+    return {
+        "message": "Saved company removed"
     }

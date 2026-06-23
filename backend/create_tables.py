@@ -3,6 +3,7 @@ from models.user import User
 from models.company import Company
 from models.question import Question
 from models.roadmap import Roadmap
+from models.saved_company import SavedCompany
 
 print("Creating tables...")
 

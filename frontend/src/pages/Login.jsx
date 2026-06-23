@@ -30,6 +30,10 @@ function Login() {
         "name",
         response.data.name
       );
+      localStorage.setItem(
+        "user_id",
+        response.data.user_id
+      );
 
       setMessage("Login Successful 🚀");
 

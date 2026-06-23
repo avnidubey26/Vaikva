@@ -9,6 +9,7 @@ import CompanyDetails from "./pages/CompanyDetails";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
+import SavedCompanies from "./pages/SavedCompanies";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -38,6 +39,11 @@ createRoot(document.getElementById("root")).render(
         <Route
           path="/dashboard"
           element={<Dashboard />}
+        />
+
+        <Route
+          path="/saved"
+          element={<SavedCompanies />}
         />
 
       </Routes>
