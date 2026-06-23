@@ -26,6 +26,11 @@ function Login() {
         response.data.access_token
       );
 
+      localStorage.setItem(
+        "name",
+        response.data.name
+      );
+
       setMessage("Login Successful 🚀");
 
       setTimeout(() => {
@@ -33,8 +38,8 @@ function Login() {
       }, 1000);
 
     } catch (error) {
-      setMessage("Invalid Credentials");
       console.log(error);
+      setMessage("Invalid Credentials");
     }
   };
 
