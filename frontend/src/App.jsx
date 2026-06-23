@@ -8,6 +8,8 @@ function App() {
 
   const navigate = useNavigate();
 
+  const userName = localStorage.getItem("name");
+
   useEffect(() => {
     fetchCompanies();
   }, []);
@@ -28,29 +30,57 @@ function App() {
     navigate(`/company/${company.id}`);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("name");
+
+    navigate("/login");
+  };
+
   return (
     <div className="min-h-screen bg-black text-white">
 
       <nav className="flex justify-between items-center px-8 py-6 border-b border-white/10 backdrop-blur-md">
+
         <h1 className="text-3xl font-bold tracking-wide">
           CareerOS
         </h1>
 
-        <div className="flex gap-4">
-          <button
-            onClick={() => navigate("/login")}
-            className="px-5 py-2 rounded-xl border border-white/20"
-          >
-            Login
-          </button>
+        <div className="flex items-center gap-4">
 
-          <button
-            onClick={() => navigate("/register")}
-            className="px-5 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 font-semibold"
-          >
-            Register
-          </button>
+          {userName ? (
+            <>
+              <p className="text-gray-300">
+                Hi, {userName} 👋
+              </p>
+
+              <button
+                onClick={handleLogout}
+                className="px-5 py-2 rounded-xl border border-red-500 text-red-400 hover:bg-red-500 hover:text-white transition-all"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={() => navigate("/login")}
+                className="px-5 py-2 rounded-xl border border-white/20"
+              >
+                Login
+              </button>
+
+              <button
+                onClick={() => navigate("/register")}
+                className="px-5 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 font-semibold"
+              >
+                Register
+              </button>
+            </>
+          )}
+
         </div>
+
       </nav>
 
       <section className="relative flex flex-col items-center justify-center text-center min-h-screen px-6 overflow-hidden">

@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import {
+  useParams,
+  Link,
+  Navigate,
+} from "react-router-dom";
 import axios from "axios";
 
 function CompanyDetails() {
@@ -7,6 +11,8 @@ function CompanyDetails() {
 
   const [questions, setQuestions] = useState([]);
   const [roadmaps, setRoadmaps] = useState([]);
+
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     fetchData();
@@ -29,12 +35,16 @@ function CompanyDetails() {
     }
   };
 
+  if (!token) {
+    return <Navigate to="/login" />;
+  }
+
   return (
     <div className="min-h-screen bg-black text-white p-10">
 
       <Link
         to="/"
-        className="inline-block mb-8 px-4 py-2 border border-white/20 rounded-lg"
+        className="inline-block mb-8 px-4 py-2 border border-white/20 rounded-lg hover:border-blue-500"
       >
         ← Back
       </Link>
