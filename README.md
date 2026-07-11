@@ -1,6 +1,6 @@
 # Vaikva
 
-Backend-driven career preparation platform built with Python, FastAPI, PostgreSQL, and SQLAlchemy.
+Backend-driven career preparation platform built with Python, FastAPI, PostgreSQL, SQLAlchemy, and JavaScript.
 
 ## Status
 
